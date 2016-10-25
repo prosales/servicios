@@ -1,0 +1,96 @@
+<div class="bg-light lter b-b wrapper-md">
+  <h1 class="m-n font-thin h3">Workflow / Flow</h1>
+</div>
+<div class="wrapper-md">
+ 
+  <toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container> 
+  <div class="panel panel-default" ng-show="numero_paso == 0">
+    <div class="panel-heading">
+      <button type="button" ng-click="crear()" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-plus"></i> Nuevo Registro</button>
+    </div>
+    <div class="panel-body">
+      <div class="row mb20">
+        <div class="col-sm-6">
+          <input type="text" ng-model="tableParams.filter()['search']" class="form-control" placeholder="Buscar" autofocus />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="tabla-registros" ng-table="tableParams" class="table table-striped" template-pagination="tpl/blocks/pagination.html">
+            <tbody>
+            <tr ng-repeat="(key, item) in $data">
+              <td data-title="'#'" filter="{ 'id': 'text' }" sortable="'id'" >{{ item.id }}</td>
+              <td data-title="'Descripcion'" filter="{ 'descripcion': 'text' }" sortable="'descripcion'" >{{ item.descripcion }}</td>
+              <td data-title="'Fecha Finalizacion'" filter="{ 'fecha_finalizacion': 'text' }" sortable="'fecha_finalizacion'" >{{ item.fecha_finalizacion }}</td>
+              <td data-title="'Pasos'" filter="{ 'pasos': 'text' }" sortable="'pasos'" >{{ item.pasos }}</td>
+              <td data-title="'Archivos'" filter="{ 'archivos': 'text' }" sortable="'archivos'" >{{ item.archivos }}</td>
+              
+              <td data-title="'Acciones'">
+                <button type="button" ng-click="editar(item)" class="btn btn-xs btn-info">
+                  <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" ng-show="numero_paso == 1">
+    <div class="panel-heading">
+      {{settings.title}} Flow
+    </div>
+    <div class="panel-body">
+
+        <div class="form-group">
+            <label>Descripcion</label>
+            <textarea type="text" class="form-control" ng-model="detalle.descripcion" required ></textarea>
+        </div>
+        <div class="form-group">
+            <label>Plantilla</label>
+            <select class="form-control" ng-model="detalle.idplantilla" ng-change="mostrarResponsables()" ng-options="plantilla.id as plantilla.nombre for plantilla in plantillas" required>
+            </select>
+        </div>
+
+        <div class="row mb20 mt20">
+          <div class="col-sm-3">
+            <h4>Responsables</h4>
+          </div>
+        </div>
+
+        <div class="row mb30" ng-if="detalle.idplantilla > 0">
+          <div class="col-sm-12">
+
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>Puesto de Trabajo</th>
+                <th>Responsable</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="item in dataPlantilla">
+                <td >{{ item.idpuesto }}</td>
+                <td ><select class="form-control" ng-model="detalle.idresponsable" ng-options="responsable.id as responsable.nombre for responsable in item.resposables" required></select></td>
+              </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <div class="row mt20">
+          <div class="col-sm-6">
+            <button class="btn btn-block btn-success" ng-click="guardar()">{{settings.accion}}</button>
+          </div>
+          <div class="col-sm-6">
+            <button class="btn btn-block btn-danger" ng-click="cancelar()">Cancelar</button>
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+</div>

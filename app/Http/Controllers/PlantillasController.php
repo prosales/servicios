@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use DB;
 use Auth;
 use App\Plantillas;
+use App\Puestos;
+use App\Usuarios;
 
 class PlantillasController extends Controller
 {
@@ -96,7 +98,20 @@ class PlantillasController extends Controller
             $registro           =   Plantillas::find($id);
             if($registro)
             {
-                $this->records  =   $registro;
+                $plantilla["id"] = $registro->id;
+                $plantilla["nombre"] = $registro->nombre;
+                $plantilla["detalle"] = [];
+
+                foreach(json_decode($registro->detalle) as $item)
+                {
+                    $i["puesto"] = Puestos::find($item->idpuesto);
+                    $i["responsables"] = Usuarios::where("idpuesto", $item->idpuesto)->get();
+                    $i["proceso"] = $item->nombre;
+
+                    array_push( $plantilla["detalle"],  $i );
+                }
+
+                $this->records  =   $plantilla;
                 $this->message      =   "Consulta exitosa";
                 $this->result       =   true;
                 $this->statusCode   =   200;
@@ -110,7 +125,7 @@ class PlantillasController extends Controller
         }
         catch (\Exception $e)
         {
-            $this->message      =   "Registro no existe";
+            $this->message      =   $e->getMessage();
             $this->result       =   false;
             $this->statusCode   =   200;
         }

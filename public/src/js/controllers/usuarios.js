@@ -1,5 +1,6 @@
-app.controller('UsuariosController', ['$scope', '$rootScope', '$modal', '$timeout', 'usuariosService', 'ngTableParams', '$filter', 'toaster', function($scope, $rootScope, $modal, $timeout , usuariosService, ngTableParams, $filter, toaster) {
+app.controller('UsuariosController', ['$scope', '$rootScope', '$modal', '$timeout', 'usuariosService', 'puestosService', 'ngTableParams', '$filter', 'toaster', function($scope, $rootScope, $modal, $timeout , usuariosService, puestosService, ngTableParams, $filter, toaster) {
   
+    $scope.puestos = [];
     $scope.data = [];
     $scope.table = [];
     $rootScope.pageTitle = "Usuarios";
@@ -18,6 +19,10 @@ app.controller('UsuariosController', ['$scope', '$rootScope', '$modal', '$timeou
                 $scope.tableParams.reload();
         });
     }
+
+    puestosService.getData('GET', {}).then(function(dataResponse) {
+            $scope.puestos = dataResponse.data.records
+    });
 
     actualizar_datos();
 

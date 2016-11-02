@@ -19,7 +19,7 @@ class UsuariosController extends Controller
     {
         try
         {
-            $this->records     =   Usuarios::all();
+            $this->records     =   Usuarios::with("puesto")->get();
             $this->message     =   "Consulta exitosa";
             $this->result      =   true;
             $this->statusCode  =   200;
@@ -57,7 +57,7 @@ class UsuariosController extends Controller
                     'estado'        =>  $request->input( 'estado', '1' ),
                     'email'         =>  $request->input( 'email',''),
                     'idpuesto'      =>  $request->input( 'idpuesto' ),
-                    'idrol'         =>  $request->input( 'idrol' )
+                    'idrol'         =>  $request->input( 'idrol', '1' )
                 ]);
 
                 if( !$registro )
@@ -194,6 +194,34 @@ class UsuariosController extends Controller
                 'message'   =>  $this->message,
                 'result'    =>  $this->result,
                 'records'   =>  $this->records
+            ];
+            
+            return response()->json($response, $this->statusCode);
+        }
+    }
+
+    public function usuarios_puestos($id)
+    {
+        try
+        {
+            $this->records  =   Usuarios::where("idpuesto", $id)->get();
+            $this->message      =   "Consulta exitosa";
+            $this->result       =   true;
+            $this->statusCode   =   200;
+        }
+        catch (\Exception $e)
+        {
+            $this->message      =   "No existen usuarios";
+            $this->result       =   false;
+            $this->statusCode   =   200;
+        }
+        finally
+        {
+            $response = 
+            [
+                'records'   =>  $this->records,
+                'message'   =>  $this->message,
+                'result'    =>  $this->result,
             ];
             
             return response()->json($response, $this->statusCode);

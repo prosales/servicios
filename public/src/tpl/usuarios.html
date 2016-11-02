@@ -23,7 +23,7 @@
               <td data-title="'Nombre'" filter="{ 'nombre': 'text' }" sortable="'nombre'" >{{ item.nombre }}</td>
               <td data-title="'Usuario'" filter="{ 'usuario': 'text' }" sortable="'user'" >{{ item.usuario }}</td>
               <td data-title="'Email'" filter="{ 'email': 'text' }" sortable="'email'" >{{ item.email }}</td>
-              <td data-title="'Puesto'" filter="{ 'puesto': 'text' }" sortable="'puesto'" >Gerente</td>
+              <td data-title="'Puesto'" filter="{ 'puesto': 'text' }" sortable="'puesto'" >{{ item.puesto.nombre }}</td>
               <td data-title="'Estado'" filter="{ 'estado': 'text' }" sortable="'estado'" ><span class="label" ng-class="item.estado == 1 ? 'bg-success' : 'bg-danger'">{{item.estado == 1 ? 'Activo' : 'Inactivo'}}</span></td>
               <td data-title="'Acciones'">
                 <button type="button" ng-click="editItem(item)" class="btn btn-xs btn-info">

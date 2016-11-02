@@ -21,8 +21,11 @@ Route::get('/', function () {
 
 Route::group(["prefix" => "ws"], function()
 {
-	Route::post( "login",				"UsuariosController@login" );
-	Route::post( "upload",				"FlowsController@upload" );
+	Route::post( "login",					"UsuariosController@login" );
+	Route::post( "upload",					"FlowsController@upload" );
+	Route::get( "usuarios_puestos/{id}",	"UsuariosController@usuarios_puestos" );
+	Route::get( "flows_pendientes", 		"FlowsController@flows_pendientes" );
+	Route::post( "aprobar_flow",			"FlowsController@aprobar_flow" );
 
 	Route::resource( "usuarios",		"UsuariosController" );
 	Route::resource( "puestos",			"PuestosController" );

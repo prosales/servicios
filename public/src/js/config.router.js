@@ -99,6 +99,21 @@ angular.module('app')
                       }]
                   }
               })
+              .state('app.reporte_fechas', {
+                  url: '/flows_entre_fechas',
+                  templateUrl: 'tpl/reporte_flows_entre_fechas.html',
+                  controller: 'ReportesController',
+                  resolve: {
+                      deps: ['$ocLazyLoad',
+                        function( $ocLazyLoad ){
+                          return $ocLazyLoad.load('toaster').then(
+                              function(){
+                                  return $ocLazyLoad.load('js/controllers/reportes.js');
+                              }
+                          );
+                      }]
+                  }
+              })
       }
     ]
   );

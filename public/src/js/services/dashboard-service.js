@@ -6,7 +6,7 @@ app.service('dashboardService',['$http', 'APP',  function($http, APP) {
 
         return $http({
             method: metodo,
-            url: APP.api + 'productos',
+            url: APP.api + 'flows_pendientes',
             params: parametros,
             headers: {
                 'Authorization': 'Token token=xxxxYYYYZzzz'
@@ -14,16 +14,10 @@ app.service('dashboardService',['$http', 'APP',  function($http, APP) {
         });
     };
 
-    this.delete = function(id) {
-        return $http.delete(APP.api + 'productos/' + id);
+    this.aprobarFlow = function(parametros) {
+        return $http.post(APP.api + 'aprobar_flow', parametros);
     };
 
-    this.update = function(parametros) {
-        return $http.put(APP.api + 'productos/' + parametros.id, parametros);
-    };
 
-    this.create = function(parametros) {
-        return $http.post(APP.api + 'productos', parametros);
-    };
 
 }]);

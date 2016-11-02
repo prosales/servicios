@@ -21,13 +21,13 @@
             <tr ng-repeat="(key, item) in $data">
               <td data-title="'#'" filter="{ 'id': 'text' }" sortable="'id'" >{{ item.id }}</td>
               <td data-title="'Descripcion'" filter="{ 'descripcion': 'text' }" sortable="'descripcion'" >{{ item.descripcion }}</td>
-              <td data-title="'Fecha Finalizacion'" filter="{ 'fecha_finalizacion': 'text' }" sortable="'fecha_finalizacion'" >{{ item.fecha_finalizacion }}</td>
+              <td data-title="'Fecha Finalizacion'" filter="{ 'fecha_finalizacion': 'text' }" sortable="'fecha_finalizacion'" >{{ item.fecha_finalizacion }} <span ng-show="item.fecha_finalizacion == NULL" class="label bg-info m-t-xs">En proceso</span><span ng-show="item.fecha_finalizacion != NULL" class="label bg-success pull-right m-t-xs">Aprobada</span></td>
               <td data-title="'Pasos'" filter="{ 'pasos': 'text' }" sortable="'pasos'" >{{ item.pasos }}</td>
               <td data-title="'Archivos'" filter="{ 'archivos': 'text' }" sortable="'archivos'" >{{ item.archivos }}</td>
               
               <td data-title="'Acciones'">
-                <button type="button" ng-click="editar(item)" class="btn btn-xs btn-info">
-                  <i class="fa fa-edit"></i>
+                <button type="button" ng-click="view(item)" class="btn btn-xs btn-info">
+                  <i class="fa fa-eye"></i>
                 </button>
               </td>
             </tr>
@@ -46,11 +46,11 @@
 
         <div class="form-group">
             <label>Descripcion</label>
-            <textarea type="text" class="form-control" ng-model="detalle.descripcion" required ></textarea>
+            <textarea type="text" class="form-control" ng-model="flow.descripcion" required ></textarea>
         </div>
         <div class="form-group">
             <label>Plantilla</label>
-            <select class="form-control" ng-model="detalle.idplantilla" ng-change="mostrarResponsables()" ng-options="plantilla.id as plantilla.nombre for plantilla in plantillas" required>
+            <select class="form-control" ng-model="flow.idplantilla" ng-change="mostrarResponsables()" ng-options="plantilla.id as plantilla.nombre for plantilla in plantillas" required>
             </select>
         </div>
 
@@ -60,7 +60,7 @@
           </div>
         </div>
 
-        <div class="row mb30" ng-if="detalle.idplantilla > 0">
+        <div class="row mb30" ng-if="flow.idplantilla > 0">
           <div class="col-sm-12">
 
             <table class="table table-striped">
@@ -72,8 +72,8 @@
               </thead>
               <tbody>
               <tr ng-repeat="item in dataPlantilla">
-                <td >{{ item.idpuesto }}</td>
-                <td ><select class="form-control" ng-model="detalle.idresponsable" ng-options="responsable.id as responsable.nombre for responsable in item.resposables" required></select></td>
+                <td >{{ item.puesto.nombre }}</td>
+                <td ><select class="form-control" ng-model="item.idresponsable" ng-options="responsable.id as responsable.nombre for responsable in item.responsables" required></select></td>
               </tr>
               </tbody>
             </table>
@@ -81,10 +81,99 @@
           </div>
         </div>
 
+        <div class="row mb20 mt20">
+          <div class="col-sm-3">
+            <h4>Archivos / Documentos</h4>
+          </div>
+        </div>
+
+        <div class="row mb20" ng-if="flow.idplantilla > 0">
+          <div class="col-sm-12">
+
+            <div class="form-group">
+              <div class="col-sm-6">
+                <input  type="file" accept=".pdf" data-classButton="btn btn-default" data-classInput="form-control inline v-middle input-s" onchange="angular.element(this).scope().uploadFile(this.files)">
+              </div>
+              <div class="col-sm-2">
+                <button type="button" ng-show="cargando == 1" class="btn btn-sm btn-info">Cargando...</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="row mb30" ng-if="flow.idplantilla > 0">
+
+          <div class="col-sm-6" ng-repeat="archivo in archivos">
+            <button class="btn btn-rounded btn-sm btn-icon btn-danger pull-right" style="position: absolute;" ng-click="eliminarItem(item)"><i class="fa fa-times"></i></button>
+            <object data="../{{archivo}}" type="application/pdf" width="100%" height="400px;">
+                  
+            </object>
+          </div>
+
+        </div>
+
         <div class="row mt20">
           <div class="col-sm-6">
             <button class="btn btn-block btn-success" ng-click="guardar()">{{settings.accion}}</button>
           </div>
+          <div class="col-sm-6">
+            <button class="btn btn-block btn-danger" ng-click="cancelar()">Cancelar</button>
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-default" ng-show="numero_paso == 2">
+    <div class="panel-heading">
+      {{settings.title}} Flow
+    </div>
+    <div class="panel-body">
+
+        <div class="row mb30">
+          <div class="col-sm-12">
+
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>Aprobador</th>
+                <th>Proceso</th>
+                <th>Comentario</th>
+                <th>Fecha Aprobó</th>
+                <th>Aprobado</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="item in view_flow.detalle">
+                <td >{{ item.usuario_aprobador.nombre }}</td>
+                <td >{{ item.proceso }}</td>
+                <td >{{ item.comentario }}</td>
+                <td >{{ item.fecha_aprobo }}</td>
+                <td >{{ item.aprobado == 0 ? 'Pendiente' : item.aprobado == 1 ? 'Aprobado' : item.aprobado == 2 ? 'Rechazado' : '' }}</td>
+              </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <div class="row mb20 mt20">
+          <div class="col-sm-3">
+            <h4>Archivos / Documentos</h4>
+          </div>
+        </div>
+        <div class="row mb30">
+
+          <div class="col-sm-6" ng-repeat="item in view_flow.files">
+            <object data="../{{item.archivo}}" type="application/pdf" width="100%" height="400px;">
+                  
+            </object>
+          </div>
+
+        </div>
+
+        <div class="row mt20">
           <div class="col-sm-6">
             <button class="btn btn-block btn-danger" ng-click="cancelar()">Cancelar</button>
           </div>

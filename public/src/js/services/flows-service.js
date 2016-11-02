@@ -26,4 +26,12 @@ app.service('flowsService',['$http', 'APP',  function($http, APP) {
         return $http.post(APP.api + 'flows', parametros);
     };
 
+    this.upload = function(parametros) {
+        return $http.post(APP.api + 'upload', parametros, {
+            withCredentials: true,
+            headers: {'Content-Type': undefined },
+            transformRequest: angular.identity
+        });
+    }
+
 }]);

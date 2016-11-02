@@ -23,4 +23,9 @@ class Usuarios extends Authenticatable
         'password', 'remember_token'
     ];
 
+    public function puesto()
+    {
+        return $this->hasOne("App\Puestos", "id", "idpuesto");
+    }
+
 }

@@ -1,4 +1,4 @@
-app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout', 'flowsService', 'plantillasService', 'localStorageService', 'ngTableParams', '$filter', 'toaster', function($scope, $rootScope, $modal, $timeout , flowsService, plantillasService, localStorageService, ngTableParams, $filter, toaster) {
+app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout', 'flowsService', 'plantillasService', 'usuariosService', 'localStorageService', 'ngTableParams', '$filter', 'toaster', function($scope, $rootScope, $modal, $timeout , flowsService, plantillasService, usuariosService, localStorageService, ngTableParams, $filter, toaster) {
   
     $scope.data = [];
     $scope.table = [];
@@ -11,7 +11,9 @@ app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout',
     }
     $scope.numero_paso = 0;
     $scope.aprobadores = [{ nombre:  "", idpuesto: 0}];
-    $scope.detalle = {};
+    $scope.flow = {};
+    $scope.cargando = 0;
+    $scope.archivos = [];
 
     var idregistro = 0;
 
@@ -66,22 +68,13 @@ app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout',
         $scope.settings.accion = "Guardar";
         $scope.settings.title = "Crear";
         $scope.flow = {};
-        $scope.aprobadores = [{ nombre:  "", idpuesto: 0}];
     }
 
-    $scope.editar = function(item)
+    $scope.view = function(item)
     {
-        $scope.mostrar(1);
-        $scope.settings.accion = "Editar";
-        $scope.settings.title = "Editar";
-
-        $scope.flow = {
-            nombre: item.nombre,
-            descripcion: item.descripcion
-        };
-
-        $scope.aprobadores = JSON.parse(item.detalle);
-        idregistro = item.id;
+        $scope.mostrar(2);
+        $scope.settings.title = "Historico";
+        $scope.view_flow = item;
     }
 
     $scope.cancelar = function()
@@ -93,45 +86,21 @@ app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout',
     {
         if(idregistro==0)
         {
+            var responsables = [];
+            angular.forEach($scope.dataPlantilla, function(value, index){
+                valor = { idusuario: value.idresponsable, proceso: value.proceso, documento: value.documento  };
+                responsables.push( valor );
+            });
             var data = {
-                nombre: $scope.flow.nombre,
                 descripcion: $scope.flow.descripcion,
+                detalle: angular.toJson(responsables),
                 usuario_creo: localStorageService.cookie.get('login').id,
-                usuario_modifico: 0,
-                pasos: $scope.aprobadores.length,
-                detalle: angular.toJson($scope.aprobadores)
+                files: angular.toJson($scope.archivos),
+                pasos: responsables.length,
+                archivos: $scope.archivos.length
             }
-
-            //console.log(data);
 
             flowsService.create( data ).then(function(dataResponse){
-                if(dataResponse.data.result)
-                {
-                    toaster.pop('success', 'Exito!', dataResponse.data.message);
-                    actualizar_datos();
-                    $scope.mostrar(0);
-                }
-                else
-                {
-                    toaster.pop('Error', 'Espera!', dataResponse.data.message);
-                }
-            });
-        }
-        else
-        {
-            var data = {
-                id: idregistro,
-                nombre: $scope.flow.nombre,
-                descripcion: $scope.flow.descripcion,
-                usuario_creo: localStorageService.cookie.get('login').id,
-                usuario_modifico: 0,
-                pasos: $scope.aprobadores.length,
-                detalle: angular.toJson($scope.aprobadores)
-            }
-
-            //console.log(data);
-
-            flowsService.update( data ).then(function(dataResponse){
                 if(dataResponse.data.result)
                 {
                     toaster.pop('success', 'Exito!', dataResponse.data.message);
@@ -154,14 +123,41 @@ app.controller('FlowsController', ['$scope', '$rootScope', '$modal', '$timeout',
 
     $scope.mostrarResponsables = function()
     {
-        plantillasService.getData('GET', $scope.flow.idplantilla).then(function(dataResponse) {
+        plantillasService.getPlantilla($scope.flow.idplantilla).then(function(dataResponse) {
                 if(dataResponse.data.result)
                 {
-                    //$scope.dataPlantilla = angular.fromJson(dataResponse.data.records.detalle);
-                    console.log(dataResponse.data.records.detalle);
+                    $scope.dataPlantilla = angular.fromJson(dataResponse.data.records.detalle);
                 }
         });
     }
+
+    $scope.eliminarItem = function(item)
+    {
+        var index = $scope.archivos.indexOf(item);
+        $scope.archivos.splice(index, 1);
+    }
+
+    $scope.uploadFile = function(files) {
+
+        $scope.cargando = 1;
+
+        var fd = new FormData();
+        
+        fd.append("file", files[0]);
+
+        flowsService.upload(fd).then(function(dataResponse) {
+            if(dataResponse.data.result)
+            {
+                $scope.cargando = 0;
+                $scope.archivos.push( dataResponse.data.url );
+            }
+            else
+            {
+                $scope.cargando = 0;
+            }
+        });
+
+    };
 
 
 }]);

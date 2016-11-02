@@ -73,10 +73,17 @@
                     dnd-effect-allowed="move"
                     >
                     <div class="row">
-                      <div class="col-sm-6">
+                      <div class="col-sm-5">
                         <input type="text" class="form-control" ng-model="item.nombre" placeholder="Ingresa el nombre del proceso" required >
                       </div>
-                      <div class="col-sm-5">
+                      <div class="col-sm-2">
+                        <div class="checkbox">
+                          <label class="i-checks">
+                            <input type="checkbox" ng-model="item.documento" ng-true-value="1" ng-false-value="0"><i></i> Documento
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
                         <select class="form-control" ng-model="item.idpuesto" ng-options="puesto.id as puesto.nombre for puesto in puestos" required>
                         </select>
                       </div>

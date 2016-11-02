@@ -63,7 +63,7 @@ app.controller('PlantillasController', ['$scope', '$rootScope', '$modal', '$time
         $scope.settings.accion = "Guardar";
         $scope.settings.title = "Crear Plantilla";
         $scope.flow = {};
-        $scope.aprobadores = [{ nombre:  "", idpuesto: 0}];
+        $scope.aprobadores = [{ nombre:  "", documento: 0, idpuesto: 0}];
     }
 
     $scope.editar = function(item)
@@ -120,8 +120,7 @@ app.controller('PlantillasController', ['$scope', '$rootScope', '$modal', '$time
                 id: idregistro,
                 nombre: $scope.flow.nombre,
                 descripcion: $scope.flow.descripcion,
-                usuario_creo: localStorageService.cookie.get('login').id,
-                usuario_modifico: 0,
+                usuario_modifico: localStorageService.cookie.get('login').id,
                 pasos: $scope.aprobadores.length,
                 detalle: angular.toJson($scope.aprobadores)
             }

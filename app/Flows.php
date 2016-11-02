@@ -12,7 +12,16 @@ class Flows extends Model
         'fecha_finalizacion',
         'pasos',
         'archivos',
+        'aprobador'
     ];
 
+    public function detalle()
+    {
+    	return $this->hasMany("App\FlowsDetalles", "idflow", "id")->with("usuario_aprobador");
+    }
 
+    public function files()
+    {
+    	return $this->hasMany("App\FlowsArchivos", "idflow", "id");
+    }
 }

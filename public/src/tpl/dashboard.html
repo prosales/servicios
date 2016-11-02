@@ -3,13 +3,114 @@
 </div>
 <div class="wrapper-md">
  
-  <toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container> 
-  <div class="panel panel-default">
+  <toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container>
+    <div class="row">
+        <div class="col-md-12">
+          <div class="row row-sm text-center">
+            <div class="col-xs-3">
+              <div class="panel padder-v bg-danger item">
+                <div class="h1 text-white font-thin h1">{{flows.length}}</div>
+                <span class="text-muted text-xs">Flows Pendientes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  <div class="panel panel-default" ng-show="numero_paso == 0">
     <div class="panel-heading">
-      
+      Flows pendientes por aprobar
     </div>
     <div class="panel-body">
-      
+    	
+    	<table class="table table-striped m-b-none">
+          <thead>
+            <tr>
+              <th>Descripcion</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in flows">
+              <td>{{ item.flow.descripcion }}</td>
+              <td>
+              	<button type="button" ng-click="editar(item)" class="btn btn-xs btn-info">
+                  <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr ng-show="flows.length == 0">
+            	<td>No tienes aprobaciones pendientes</td>
+            </tr>
+          </tbody>
+        </table>
+
+    </div>
+  </div>
+
+  <div class="panel panel-default" ng-show="numero_paso == 1">
+    <div class="panel-heading">
+      Aprobacion de Flow
+    </div>
+    <div class="panel-body">
+
+        <div class="form-group">
+            <label>Descripcion</label>
+            <textarea type="text" class="form-control" ng-model="flow.proceso" readonly></textarea>
+        </div>
+        <div class="form-group">
+            <label>Comentarios</label>
+            <textarea type="text" class="form-control" ng-model="flow.comentario" ></textarea>
+        </div>
+
+        <div class="row mb20" ng-if="flow.documento > 0">
+          <div class="col-sm-12">
+
+            <div class="form-group">
+              <div class="col-sm-6">
+                <input  type="file" accept=".pdf" data-classButton="btn btn-default" data-classInput="form-control inline v-middle input-s" onchange="angular.element(this).scope().uploadFile(this.files)">
+              </div>
+              <div class="col-sm-2">
+                <button type="button" ng-show="cargando == 1" class="btn btn-sm btn-info">Cargando...</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row mb20 mt20">
+          <div class="col-sm-3">
+            <h4>Documentos</h4>
+          </div>
+        </div>
+
+        <div class="row mb30">
+
+          <div class="col-sm-6" ng-repeat="item in archivos">
+            <object data="../{{item.archivo}}" type="application/pdf" width="100%" height="400px;">
+                  
+            </object>
+          </div>
+          <div class="col-sm-6" ng-repeat="item in archivos_news">
+            <button class="btn btn-rounded btn-sm btn-icon btn-danger pull-right" style="position: absolute;" ng-click="eliminarItem(item)"><i class="fa fa-times"></i></button>
+            <object data="../{{item}}" type="application/pdf" width="100%" height="400px;">
+                  
+            </object>
+          </div>
+
+        </div>
+
+        <div class="row mt20">
+          <div class="col-sm-4">
+            <button class="btn btn-block btn-success" ng-click="guardar(1)">Aprobar</button>
+          </div>
+          <div class="col-sm-4">
+            <button class="btn btn-block btn-danger" ng-click="guardar(2)">Rechazar</button>
+          </div>
+          <div class="col-sm-4">
+            <button class="btn btn-block btn-default" ng-click="guardar(0)">Cancelar</button>
+          </div>
+        </div>
+
     </div>
   </div>
 

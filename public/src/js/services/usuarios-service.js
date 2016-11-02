@@ -31,4 +31,8 @@ app.service('usuariosService',['$http', 'APP',  function($http, APP) {
         return $http.post(APP.api + 'usuarios', parametros);
     };
 
+    this.usuariosPuestos = function(id){
+        return $http.get(APP.api + 'usuarios_puestos/' + id);
+    }
+
 }]);

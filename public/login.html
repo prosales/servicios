@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" data-ng-app="myApp"> <!--<![endif]-->
+<head>
+
+    <!-- Meta-Information -->
+    <title>Dashboard | Mr. Burbujas</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Sistema para el control de lavados de un Carwash">
+    <meta name="author" content="Pablo Rosales">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Vendor: Bootstrap Stylesheets http://getbootstrap.com -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Our Website CSS Styles -->
+    <link rel="stylesheet" href="css/icons.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+</head>
+<body ng-controller="LoginController">
+ 
+<div class="panel-content">
+
+	<div class="main-content-area" ng-show="tag == 1">
+		<div class="go-full">
+			<div class="account-sec">
+				<div class="logo">
+				   <a href="login.html" title="">
+				        <span>Mr Burbujas</span>
+				        <p>Ingresa tus datos</p>
+				   </a>
+				</div>
+				<form class="account-form">
+					<fieldset>
+						<i class="ti-user"></i>
+						<input type="text" placeholder="Usuario" ng-model="user.usuario"/>
+					</fieldset>
+					<fieldset>
+						<i class="ti-key"></i>
+						<input type="password" placeholder="Password" ng-model="user.password"/>
+					</fieldset>
+					<label><input type="checkbox" ng-model="user.empleado">Es empleado ?</label>
+					<button class="c-btn medium green pop pull-right" ng-click="login()">Entrar</button>
+				</form>
+				<ul class="account-feature">
+					<li><a href="" ng-click="signup()">Crear cuenta</a></li>
+				</ul>
+			</div><!-- Login Sec -->
+		</div>
+	</div>
+
+	<div class="main-content-area" ng-show="tag == 2">
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<div class="billing-sec">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="widget-title no-padding no-margin">
+								<h3>Crea tu cuenta</h3>
+								<p>Debes ingresar tu información. (*) Campos requeridos</p>
+							</div>
+						</div>
+						<div class="col-md-12 field">
+							<label>Codigo de Empleado <span>*</span> </label>
+							<input type="text" ng-model="sign.codigo_empleado" />
+						</div>
+						<div class="col-md-6 field">
+							<label>Primer Nombre <span>*</span> </label>
+							<input type="text" ng-model="sign.primer_nombre" />
+						</div>
+						<div class="col-md-6 field">
+							<label>Segundo Nombre <span></span> </label>
+							<input type="text" ng-model="sign.segundo_nombre" />
+						</div>
+						<div class="col-md-6 field">
+							<label>Primer Apellido <span>*</span> </label>
+							<input type="text" ng-model="sign.primer_apellido" />
+						</div>
+						<div class="col-md-6 field">
+							<label>Segundo Apellido <span></span> </label>
+							<input type="text" ng-model="sign.segundo_apellido" />
+						</div>
+						
+						<div class="col-md-6 field">
+							<label>Telefono <span>*</span> </label>
+							<input type="text" ng-model="sign.telefono" />
+						</div>
+						<div class="col-md-6 field">
+							<label>Email<span>*</span> </label>
+							<input type="email" ng-model="sign.email" />
+						</div>
+						<div class="col-md-2">
+							<button class="red-skin" ng-click="cancelar()">Cancelar</button> 
+						</div>
+						<div class="col-md-2">
+							<button class="green-skin" ng-click="enviar()">Enviar</button>
+						</div>
+					</div>				
+
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	</div>
+
+</div><!-- Panel Content -->
+
+
+<!-- Vendor: Javascripts -->
+<script src="js/jquery-2.1.3.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Vendor: Angular, followed by our custom Javascripts -->
+<script src="js/angular.min.js"></script>
+<script src="js/angular-route.min.js"></script>
+<script src="node_modules/angular-local-storage/dist/angular-local-storage.min.js"></script>
+<script src="https://maps.google.com/maps/api/js?key=AIzaSyDrlCWSCEGTYat1yFIybvtjXe6v24wXY04" async="" defer="defer" type="text/javascript"></script>
+
+<!-- Our Website Javascripts -->
+<script src="js/app.js"></script>
+<script src="js/app.constants.js"></script>
+<script src="js/login.js"></script>
+
+</body>
+</html>

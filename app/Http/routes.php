@@ -16,19 +16,18 @@ header("Access-Control-Allow-Methods : GET,POST,PUT,DELETE,OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");*/
 
 Route::get('/', function () {
-    return Redirect::to("src");
+    return Redirect::to("index.html");
 });
 
-Route::group(["prefix" => "ws"], function()
+Route::group(["prefix" => "api"], function()
 {
-	Route::post( "login",					"UsuariosController@login" );
-	Route::post( "upload",					"FlowsController@upload" );
-	Route::get( "usuarios_puestos/{id}",	"UsuariosController@usuarios_puestos" );
-	Route::get( "flows_pendientes", 		"FlowsController@flows_pendientes" );
-	Route::post( "aprobar_flow",			"FlowsController@aprobar_flow" );
+	Route::any("/login",					"UsuariosController@login");
+	Route::get("/tipos_usuarios",			"UsuariosController@tipos_usuarios");
 
-	Route::resource( "usuarios",		"UsuariosController" );
-	Route::resource( "puestos",			"PuestosController" );
-	Route::resource( "plantillas",		"PlantillasController" );
-	Route::resource( "flows",			"FlowsController" );
+	Route::resource("/usuarios",			"UsuariosController");
+	Route::resource("/tipos_vehiculos",		"TiposVehiculosController");
+	Route::resource("/servicios",			"ServiciosController");
+	Route::resource("/extras",				"ExtrasController");
+	Route::resource("/empleados",			"EmpleadosController");
+	Route::resource("/compras",				"ComprasController");
 });

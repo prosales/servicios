@@ -12,20 +12,19 @@ class Usuarios extends Authenticatable
     	'nombre', 
     	'usuario', 
     	'password', 
-    	'remember_token',
-        'estado',
     	'email',
-    	'idpuesto',
-    	'idrol'
+        'estado',
+    	'id_tipo_usuario',
+    	'remember_token'
     ];
 
     protected $hidden = [
         'password', 'remember_token'
     ];
 
-    public function puesto()
+    public function tipo_usuario()
     {
-        return $this->hasOne("App\Puestos", "id", "idpuesto");
+        return $this->hasOne("App\TiposUsuarios", "id", "id_tipo_usuario");
     }
 
 }

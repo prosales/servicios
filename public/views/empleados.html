@@ -1,0 +1,67 @@
+<div class="panel-content">
+	<div class="welcome-patti">
+		
+		<ul class="breadcrumbs">
+			<li><a href="#" title=""><i class="fa fa-home"></i></a></li>
+			<li><a href="#" title="">{{settings.plural}}</a></li>
+		</ul>
+	</div><!-- Welcome Patti -->
+	<div class="heading-sec">
+
+	</div><!-- Heading Sec -->
+	<div class="main-content-area">
+		<div class="row" ng-show="mostrar == 0">
+			<div class="col-md-12">
+				<div class="widget no-padding blank">
+					
+					<div class="panel panel-default work-progress-table">
+						<div class="panel-heading">
+							{{data.length}} Registros <i></i>
+							<div class="dropdown rounded">
+								<div class="form-group">
+									<input type="text" placeholder="Buscar" class="form-control" ng-model="search.$">
+								</div>
+							</div>
+						</div>
+						<table id="dataTable" class="table table-striped">
+							<thead>
+							  <tr>
+								<th>#</th>
+								<th>Codigo Empleado</th>
+								<th>Nombre Completo</th>
+								<th>Telefono</th>
+								<th>Email</th>
+								<th>Estado</th>
+								<th>Usuario Habilito</th>
+							  </tr>
+							</thead>
+							<tbody>
+							  <tr ng-repeat="item in data | filter:search">
+							  	<td>{{item.id}}</td>
+							  	<td>{{item.codigo_empleado}}</td>
+							  	<td>{{item.primer_nombre + ' ' + item.segundo_nombre + ' ' + item.primer_apellido + ' ' + item.segundo_apellido}}</td>
+							  	<td>{{item.telefono}}</td>
+							  	<td>{{item.email}}</td>
+							  	<td><button class="c-btn mini" ng-class="item.estado == 1 ? 'green' : 'red'">{{item.estado == 1 ? 'Activo' : 'Inactivo'}}</button></td>
+							  </tr>
+							  <tr ng-if="data.length == 0">
+							  	<td>No hay registros</td>
+							  </tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>		
+		</div>
+
+	</div>
+
+</div><!-- Panel Content -->
+<script type="text/javascript">
+	$(document).ready(function(){
+    
+    'use strict';
+
+		
+	});
+</script>

@@ -74,12 +74,12 @@ class EmpleadosController extends Controller
                     "codigo_empleado" => $request->input("codigo_empleado"),
                     "password" => "",
                     "primer_nombre" => $request->input("primer_nombre"),
-                    "segundo_nombre" => $request->input("segundo_nombre"),
+                    "segundo_nombre" => $request->input("segundo_nombre", ""),
                     "primer_apellido" => $request->input("primer_apellido"),
-                    "segundo_apellido" => $request->input("segundo_apellido"),
+                    "segundo_apellido" => $request->input("segundo_apellido", ""),
                     "telefono" => $request->input("telefono"),
                     "email" => $request->input("email"),
-                    "estado" => "1",
+                    "estado" => "0",
                     "id_usuario_activo" => "0"
                 ]);
 
@@ -230,6 +230,113 @@ class EmpleadosController extends Controller
             $this->message = "Registro eliminado";
             $this->result = true;
             $this->records = Empleados::destroy($id);
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al eliminar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function activar($id)
+    {
+        try
+        {
+            $actualizarRegistro = DB::transaction( function() use ($id){
+                
+                $registro = Empleados::find($id);
+
+                if(!$registro)
+                    throw new Exception("El registro no existe");
+                else
+                {
+                    $pass = str_random(10);
+                    $registro->password = bcrypt( $pass );
+                    $registro->estado = 1;
+
+                    $registro->save();
+
+                    $data = [
+                        "nombre" => $registro->primer_nombre." ".$registro->primer_apellido,
+                        "codigo" => $registro->codigo_empleado,
+                        "password" => $pass
+                    ];
+
+                    \Mail::send('activacion_cliente', $data, function ($message) use ($registro)
+                    {
+                        $message->subject("Activación de Cuenta");
+
+                        $message->from('burbujas@researchmobile.co', 'Mr. Burbujas');
+
+                        $message->to($registro->email);
+
+                    });
+
+                    return $registro;  
+                }
+            });
+
+            $this->message = "Registro activado correctamente";
+            $this->result = true;
+            $this->records = $actualizarRegistro;
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al eliminar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function cambiar_password(Request $request)
+    {
+        try
+        {
+            $actualizarRegistro = DB::transaction( function() use ($request){
+                
+                $registro = Empleados::find($request->input("id"));
+
+                if(!$registro)
+                    throw new Exception("El registro no existe");
+                else
+                {
+                    if( \Hash::check( $request->input("pass_actual"), $registro->password ) )
+                    {
+                        $registro->password = bcrypt( $request->input("password") );
+
+                        $registro->save();
+
+                        return $registro; 
+                    }
+                    else
+                    {
+                        throw new \Exception("Contraseña actual inválida");
+                    } 
+                }
+            });
+
+            $this->message = "Contraseña actualizada correctamente";
+            $this->result = true;
+            $this->records = $actualizarRegistro;
         }
         catch(\Exception $e)
         {

@@ -11,13 +11,117 @@
 			<div class="col-md-4 column">
 				<div class="heading-profile">
 					<h2>Dashboard</h2>
-					<span>Your Sample text</span>
+					
 				</div>
 			</div>
 		</div>
 	</div><!-- Heading Sec -->
 	<div class="main-content-area">
-		
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="profile-sec">
+					<div class="profile-head">
+						<div class="profile-avatar">
+							<span><img src="images/avatar.png" width="100"></span>
+							<div class="profile-name">
+								<h3>{{nombre}}</h3>
+								<i>{{codigo_empleado}}</i>
+								
+							</div>
+						</div>
+						<ul class="profile-count">
+							<li>10<i>Servicios comprados</i></li>
+							<li>5<i>Sin usar</i></li>
+							<li>5<i>Usados</i></li>
+						</ul>
+						<ul class="profile-connect">
+							<li><a href="" ng-click="cambiar_password()">Cambiar contraseña</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" ng-show="mostrar == 1">
+			<div class="col-md-12">
+				<div class="widget with-padding">
+				<form name="form" class="form-validation">				 
+					<h4>Cambiar contraseña</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="inline-form">
+								<label class="c-label">Contraseña Actual</label><input class="input-style" type="password" placeholder="Contraseña Actual" ng-model="usuario.pass_actual" required>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="inline-form">
+								<label class="c-label">Contraseña Nueva</label><input class="input-style" type="password" placeholder="Contraseña Nueva" ng-model="usuario.password" required>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row" style="margin-top: 30px;">
+						<div class="col-md-6" ng-show="msg.mostrar == 1">
+							<div class="notification">
+								<div role="alert" class="alert color" ng-class="msg.color">
+									<strong>{{msg.title}}</strong> {{msg.message}}
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 pull-right">
+							<button href="#" title="" class="c-btn large green pop pull-right" ng-click="guardar()" ng-disabled="form.$invalid">Guardar</button>
+							<button href="#" title="" class="c-btn large red pop pull-right" ng-click="cancelar()">Cancelar</button>
+						</div>
+					</div>
+
+				</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="widget no-padding blank">
+					<div class="panel panel-default work-progress-table">
+						<div class="panel-heading">
+							{{data.length}} Registros <i>Mis servicios</i>
+							<div class="dropdown rounded">
+								<div class="form-group">
+									<input type="text" placeholder="Buscar" class="form-control" ng-model="search.$">
+								</div>
+							</div>
+						</div>
+						<table id="dataTable" class="table table-striped">
+							<thead>
+							  <tr>
+							  	<th>Fecha</th>
+								<th>Código</th>
+								<th>Tipo Vehiculo</th>
+								<th>Servicio</th>
+								<th>Extras</th>
+								<th>Total</th>
+							  </tr>
+							</thead>
+							<tbody>
+							  <tr ng-repeat="item in data | filter:search">
+							  	<td>{{item.fecha}}</td>
+							  	<td>{{item.codigo}}</td>
+							  	<td>{{item.detalle.tipo_vehiculo.nombre}}</td>
+							  	<td>{{item.detalle.servicio.nombre}}</td>
+							  	<td><p ng-repeat="x in item.detalle.extras"> {{x.nombre}}<br></p></td>
+							  	<td>{{item.total}}</td>
+							  </tr>
+							  <tr ng-if="data.length == 0">
+							  	<td>No hay registros</td>
+							  </tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>		
+		</div>
+
 	</div>
 </div><!-- Panel Content -->
 <script type="text/javascript">

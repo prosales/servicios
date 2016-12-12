@@ -1,0 +1,42 @@
+<div class="panel-content">
+	<div class="welcome-patti">
+		
+		<ul class="breadcrumbs">
+			<li><a href="#" title=""><i class="fa fa-home"></i></a></li>
+			<li><a href="#" title="">Colas</a></li>
+		</ul>
+	</div><!-- Welcome Patti -->
+	<div class="heading-sec">
+		<div class="row">
+			<div class="col-md-4 column">
+				<div class="heading-profile">
+					<h2>Colas</h2>
+					
+				</div>
+			</div>
+		</div>
+	</div><!-- Heading Sec -->
+	<div class="main-content-area">
+		
+		<div class="row">
+			<div class="col-md-4" ng-repeat="item in data">
+				<div class="widget">
+					<div class="grids">
+						<div class="ribbon-wrapper"><div class="ribbon-design " ng-class="item.inicio_lavado!=null ? 'red' : 'sky'">{{item.inicio_lavado!=null ? 'PROCESO' : 'PENDIENTE'}}</div></div>
+						<h4>Servicio #{{item.id}}</h4>
+						<p><b>Tipo Vehiculo: </b>{{item.servicio.detalle.tipo_vehiculo.nombre}}</p>
+						<p><b>Sevicio: </b>{{item.servicio.detalle.servicio.nombre}}</p>
+						<p><b>Extras:</b></p>
+						<p>{{item.servicio.detalle.extras.length == 0 ? 'Ninguno' : getStringArray(item.servicio.detalle.extras)}}</p>
+						<button class="c-btn small green" ng-show="item.inicio_lavado==null" ng-click="iniciar(item)">Iniciar</button>
+						<button class="c-btn small red" ng-show="item.inicio_lavado!=null" ng-click="finalizar(item)">Finalizar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div><!-- Panel Content -->
+<script type="text/javascript">
+
+</script>

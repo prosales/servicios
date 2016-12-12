@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Usuarios;
+use App\Empleados;
 use App\TiposUsuarios;
 use DB;
 use Exception;
@@ -303,6 +304,70 @@ class UsuariosController extends Controller
                 else
                 {        
                     $this->message = "Usuario o password incorrecto";
+                    $this->result = false;
+                }
+
+            }
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Ocurrio un problema al iniciar sesion";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function login_cliente(Request $request)
+    {
+        try
+        {
+            $rules = array(
+                'codigo_empleado'  => 'required', 
+                'password' => 'required|min:3'
+            );
+
+            $validator = \Validator::make($request->all(), $rules);
+            
+            if ($validator->fails()) 
+            {
+
+                throw new Exception("Todos los campos son obligatorios");
+            } 
+            else
+            {
+
+                $userdata = array(
+                    'codigo_empleado'   => $request->input('codigo_empleado'),
+                    'password'          => $request->input('password')
+                );
+
+                $empleado = Empleados::where("codigo_empleado", $userdata["codigo_empleado"])->first();
+                if ( $empleado )
+                {
+                    if( \Hash::check( $userdata["password"], $empleado->password ) )
+                    {
+                        $this->message = "Bienvenido";
+                        $this->result = true;
+                        $this->records = $empleado;
+                    }
+                    else
+                    {
+                        $this->message = "Password incorrecto";
+                        $this->result = false;
+                    }
+                }
+                else
+                {        
+                    $this->message = "Usuario incorrecto";
                     $this->result = false;
                 }
 

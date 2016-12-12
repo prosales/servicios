@@ -20,6 +20,10 @@ class Empleados extends Model
         'id_usuario_activo'
     ];
 
+    protected $hidden = [
+        'password'
+    ];
+
     public function usuario_activo()
     {
     	return $this->hasOne("App\Usuarios", "id", "id_usuario_activo");

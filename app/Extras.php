@@ -11,4 +11,8 @@ class Extras extends Model
         'nombre',
         'precios'
     ];
+
+    protected $casts = [
+        'precios' => 'array'
+    ];
 }

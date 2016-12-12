@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Servicios;
+use App\Extras;
+use App\TiposVehiculos;
 use DB;
 use Exception;
 use Auth;
@@ -219,6 +221,80 @@ class ServiciosController extends Controller
             $this->message = "Registro eliminado";
             $this->result = true;
             $this->records = Servicios::destroy($id);
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al eliminar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function servicios_clientes()
+    {
+        try
+        {
+            $tipos_vehiculos = TiposVehiculos::all();
+            $servicios = Servicios::all();
+            $extras = Extras::all();
+            $data = [];
+            $data2 = [];
+            $registros = [];
+            
+            foreach($servicios as $item)
+            {
+                foreach($item->precios as $tipo)
+                {
+                    if(!isset($data[$tipo["nombre"]]))
+                    {
+                        $data[$tipo["nombre"]] = [];
+                        if($tipo["precio"]!=0)
+                            array_push($data[$tipo["nombre"]], array("id"=>$item->id, "nombre"=> $item->nombre, "precio"=> $tipo["precio"], "cantidad"=>$item->cantidad));
+                    }
+                    else
+                    {
+                        if($tipo["precio"]!=0)
+                            array_push($data[$tipo["nombre"]], array("id"=>$item->id,"nombre"=> $item->nombre, "precio"=> $tipo["precio"], "cantidad"=>$item->cantidad));
+                    }
+                }
+            }
+
+            foreach($extras as $item)
+            {
+                foreach($item->precios as $tipo)
+                {
+                    if(!isset($data2[$tipo["nombre"]]))
+                    {
+                        $data2[$tipo["nombre"]] = [];
+                        if($tipo["precio"]!=0)
+                            array_push($data2[$tipo["nombre"]], array("id"=>$item->id, "nombre"=> $item->nombre, "precio"=> $tipo["precio"]));
+                    }
+                    else
+                    {
+                        if($tipo["precio"]!=0)
+                            array_push($data2[$tipo["nombre"]], array("id"=>$item->id, "nombre"=> $item->nombre, "precio"=> $tipo["precio"]));
+                    }
+                }
+            }
+
+            foreach($tipos_vehiculos as $item)
+            {
+                $objeto = array("id"=>$item->id, "nombre"=> $item->nombre, "servicios"=>$data[$item->nombre], "extras"=> $data2[$item->nombre]);
+                array_push($registros, $objeto);
+            }
+
+            $this->records = $registros;
+            $this->message = "Registros consultados";
+            $this->result = true;
         }
         catch(\Exception $e)
         {

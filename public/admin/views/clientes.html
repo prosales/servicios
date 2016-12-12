@@ -33,6 +33,7 @@
 								<th>Email</th>
 								<th>Estado</th>
 								<th>Usuario Habilito</th>
+								<th ng-if="type == 3">Acciones</th>
 							  </tr>
 							</thead>
 							<tbody>
@@ -43,6 +44,8 @@
 							  	<td>{{item.telefono}}</td>
 							  	<td>{{item.email}}</td>
 							  	<td><button class="c-btn mini" ng-class="item.estado == 1 ? 'green' : 'red'">{{item.estado == 1 ? 'Activo' : 'Inactivo'}}</button></td>
+							  	<td></td>
+							  	<td ng-if="type == 3"><button class="c-btn mini green pop" ng-click="activar(item)" ng-if="item.estado == 0"><i class="fa fa-check green"></i></button></td>
 							  </tr>
 							  <tr ng-if="data.length == 0">
 							  	<td>No hay registros</td>
@@ -52,6 +55,45 @@
 					</div>
 				</div>
 			</div>		
+		</div>
+
+		<div class="row" ng-show="mostrar == 1">
+			<div class="col-md-12">
+				<div class="widget with-padding">
+				<form name="form" class="form-validation">				 
+					<h4>{{settings.accion}} {{settings.singular}}</h4>
+					<div class="row" ng-show="false">
+						<div class="col-md-6">
+							<div class="inline-form">
+								<label class="c-label">Valor</label><input class="input-style" type="text" placeholder="Nombre" ng-model="item.id" required>
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="row" >
+						<div class="col-md-12 text-center">
+							<h5>Desea dar de altar a <b>{{item.primer_nombre + ' ' + item.segundo_nombre + ' ' + item.primer_apellido + ' ' + item.segundo_apellido}}</b></h5>
+						</div>
+					</div>
+					
+					<div class="row" style="margin-top: 30px;">
+						<div class="col-md-6" ng-show="msg.mostrar == 1">
+							<div class="notification">
+								<div role="alert" class="alert color" ng-class="msg.color">
+									<strong>{{msg.title}}</strong> {{msg.message}}
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 pull-right">
+							<button href="#" title="" class="c-btn large green pop pull-right" ng-click="guardar(item)" ng-disabled="form.$invalid">Activar</button>
+							<button href="#" title="" class="c-btn large red pop pull-right" ng-click="cancelar()">Cancelar</button>
+						</div>
+					</div>
+
+				</form>
+				</div>
+			</div>
 		</div>
 
 	</div>

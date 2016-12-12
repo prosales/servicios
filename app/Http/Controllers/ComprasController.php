@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Compras;
 use App\ServiciosEmpleados;
+use App\Empleados;
 use DB;
 use Exception;
 use Auth;
+use Carbon\Carbon;
 
 class ComprasController extends Controller
 {
@@ -23,13 +25,22 @@ class ComprasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try
         {
+            if($request->input("id_empleado"))
+            {
+                $registros = Compras::where("id_empleado", $request->input("id_empleado"))->get();
+            }
+            else
+            {
+                $registros = Compras::all();
+            }
+
             $this->message = "Consulta exitosa";
             $this->result = true;
-            $this->records = Compras::all();
+            $this->records = $registros;
         }
         catch(\Exception $e)
         {
@@ -69,20 +80,45 @@ class ComprasController extends Controller
         try
         {
             $nuevoRegistro = DB::transaction( function() use($request){
-                
+
                 $registro = Compras::create(
                 [
-                    "codigo" => $request->input("codigo"),
+                    "codigo" => "",
                     "id_empleado" => $request->input("id_empleado"),
                     "cantidad" => $request->input("cantidad"),
-                    "detalle" => $request->input("detalle"),
-                    "total" => $request->input("total")
+                    "detalle" => json_decode($request->input("detalle")),
+                    "total" => $request->input("total"),
+                    "fecha" => Carbon::now("America/Guatemala")->toDateString()
                 ]);
 
                 if(!$registro)
+                {
                     throw new Exception("Ocurrio un problema al crear el registro");
+                }
                 else
+                {
+                    $codigo = $registro->id.str_random(5);
+                    $registro->codigo = $codigo;
+                    $registro->save();
+                    $empleado = Empleados::find($request->input("id_empleado"));
+
+                    $data = [
+                        "nombre" => $empleado->primer_nombre." ".$empleado->primer_apellido,
+                        "codigo" => $codigo
+                    ];
+
+                    \Mail::send('servicio', $data, function ($message) use ($empleado)
+                    {
+                        $message->subject("Compra de Servicio");
+
+                        $message->from('burbujas@researchmobile.co', 'Mr. Burbujas');
+
+                        $message->to($empleado->email);
+
+                    });
+
                     return $registro;
+                }
             });
 
             $this->message = "Registro creado";
@@ -240,5 +276,157 @@ class ComprasController extends Controller
         }
     }
     
+    public function consultar_servicio(Request $request)
+    {
+        try
+        {
+            $registro = Compras::where("codigo", $request->input("codigo"))->first();
+            if($registro)
+            {
+                if($registro->cantidad > 0)
+                {
+                    $registro->empleado;
 
+                    $this->message = "Registro consultado";
+                    $this->result = true;
+                    $this->records = $registro;
+                }
+                else
+                {
+                    $this->message = "El codigo ya fue utilizado y no cuenta con cupo";
+                    $this->result = false;
+                }
+            }
+            else
+            {
+                $this->message = "El codigo ingresado no existe";
+                $this->result = false;
+            }
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al consultar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function agregar_servicio(Request $request)
+    {
+        try
+        {
+            $nuevoRegistro = DB::transaction( function() use($request){
+
+                $registro = ServiciosEmpleados::create(
+                [
+                    "id_compra" => $request->input("id_compra"),
+                    "fecha_ingreso" => Carbon::now("America/Guatemala")->toDateTimeString(),
+                    "inicio_lavado" => NULL,
+                    "fin_lavado" => NULL,
+                    "horas" => "",
+                    "id_usuario_atendio" => $request->input("id_usuario")
+                ]);
+
+                if(!$registro)
+                {
+                    throw new Exception("Ocurrio un problema al crear el registro");
+                }
+                else
+                {
+                    $compra = Compras::find($request->input("id_compra"));
+                    $compra->cantidad -= 1;
+                    $compra->save();
+
+                    return $registro;
+                }
+            });
+
+            $this->message = "Registro creado";
+            $this->result = true;
+            $this->records = $nuevoRegistro;
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al crear registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function consultar_colas($id)
+    {
+        try
+        {
+            $colas = ServiciosEmpleados::with("servicio")->whereRaw("id_usuario_atendio = ? AND fin_lavado IS NULL", [$id])->get();
+
+            $this->message = "Registros consultados";
+            $this->result = false;
+            $this->records = $colas;
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al consultar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function lavado(Request $request)
+    {
+        try
+        {
+            $registro = ServiciosEmpleados::find($request->input("id"));
+            if($request->input("inicio") == "1")
+                $registro->inicio_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
+            else
+                $registro->fin_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
+            $registro->save();
+
+            $this->message = "Registro actualizado";
+            $this->result = true;
+            $this->records = $registro;
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al consultar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
 }

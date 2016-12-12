@@ -4,15 +4,20 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TiposUsuarios extends Model
+class Compras extends Model
 {
-	protected $table = 'tipos_usuarios';
+	protected $table = 'compras';
     protected $fillable = [
         'codigo',
         'id_empleado',
         'cantidad',
         'detalle',
-        'total'
+        'total',
+        'fecha'
+    ];
+
+    protected $casts = [
+        'detalle' => 'array'
     ];
 
     public function empleado()

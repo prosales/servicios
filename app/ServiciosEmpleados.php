@@ -9,12 +9,15 @@ class ServiciosEmpleados extends Model
 	protected $table = 'servicios_empleados';
     protected $fillable = [
         'id_compra',
-        'id_empleado',
         'fecha_ingreso',
         'inicio_lavado',
         'fin_lavado',
         'horas',
-        'detalle',
         'id_usuario_atendio'
     ];
+
+    public function servicio()
+    {
+    	return $this->hasOne("App\Compras", "id", "id_compra")->with("empleado");
+    }
 }

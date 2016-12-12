@@ -7657,8 +7657,7 @@ blockquote span a {
     width: 100%;
 }
 .profile-head {
-    background-image: url("http://placehold.it/988x240");
-    background-size: 100% 100%;
+    background: #444444;
     min-height: 226px;
     overflow: hidden;
     padding: 40px;

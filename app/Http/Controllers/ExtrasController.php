@@ -72,7 +72,7 @@ class ExtrasController extends Controller
                 $registro = Extras::create(
                 [
                     "nombre" => $request->input("nombre"),
-                    "precios" => $request->input("precios")
+                    "precios" => json_decode($request->input("precios"))
                 ]);
 
                 if(!$registro)
@@ -173,7 +173,7 @@ class ExtrasController extends Controller
                 else
                 {
                     $registro->nombre = $request->input("nombre", $registro->nombre);
-                    $registro->precios = $request->input("precios", $registro->precios);
+                    $registro->precios = json_decode($request->input("precios"));
 
                     $registro->save();
 

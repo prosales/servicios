@@ -10,7 +10,7 @@
 /**
  * Configure the Routes
  */
-var app = angular.module('myApp', [
+var app = angular.module('myAppClient', [
   'ngRoute',
   'LocalStorageModule',
   'ngTable',
@@ -19,10 +19,7 @@ var app = angular.module('myApp', [
   config(['$routeProvider', function($routeProvider) {
     $routeProvider
     .when("/", {templateUrl: "views/dashboard.html", controller: "DashboardController"})
-    .when("/usuarios", {templateUrl: "views/usuarios.html", controller: "UsuariosController"})
-    .when("/empleados", {templateUrl: "views/empleados.html", controller: "EmpleadosController"})
-    .when("/tipos_vehiculos", {templateUrl: "views/tipos_vehiculos.html", controller: "TiposVehiculosController"})
-    .when("/servicios", {templateUrl: "views/servicios.html", controller: "ServiciosController"})
+    .when("/comprarservicio", {templateUrl: "views/comprarservicio.html", controller: "ServiciosController"})
     .when("/404", {templateUrl: "views/404.html"})
 
     // else 404
@@ -108,29 +105,21 @@ function loader()
 
 app.controller('MainController', function($scope, $window, localStorageService) {
 
-  if (!localStorageService.cookie.get('login')) {
+  if (!localStorageService.cookie.get('cliente')) {
       $window.location.href = 'login.html';
   }
 
-  $scope.username = localStorageService.cookie.get('login').nombre;
-  $scope.user = localStorageService.cookie.get('login').usuario;
-
-});
-
-app.controller('DashboardController', function ($scope, $window, $http) {
+  $scope.id_empleado = localStorageService.cookie.get('cliente').id;
+  $scope.codigo_empleado = localStorageService.cookie.get('cliente').codigo_empleado;
+  $scope.nombre = localStorageService.cookie.get('cliente').primer_nombre + ' ' + localStorageService.cookie.get('cliente').primer_apellido;
 
   loader();
 
 });
 
-app.controller('UsuariosController', function ($scope, $window, usuariosService) {
+app.controller('DashboardController', function ($scope, $window, $http, APP, serviciosService) {
 
   $scope.data = [];
-  $scope.settings = {
-    singular: 'Usuario',
-    plural: 'Usuarios',
-    accion: 'Crear'
-  }
   $scope.msg = {
       mostrar: 0,
       title: "",
@@ -141,45 +130,18 @@ app.controller('UsuariosController', function ($scope, $window, usuariosService)
 
   $scope.cargar_datos = function()
   {
-    $scope.mostrar = 0;
-    $scope.msg = {
-        mostrar: 0,
-        title: "",
-        message: "",
-        color: ""
-    }
-    usuariosService.getData("GET", {}).then(function(dataResponse)
-    {
+    serviciosService.getDataCompras("GET", { id_empleado: $scope.id_empleado }).then(function(dataResponse){
+
       $scope.data = dataResponse.data.records;
+
     });
   }
 
   $scope.cargar_datos();
 
-  usuariosService.getTipos().then(function(dataResponse)
+  $scope.cambiar_password = function()
   {
-    $scope.tipos_usuarios = dataResponse.data.records;
-  });
-
-  $scope.crear = function()
-  {
-    $scope.settings.accion = 'Crear';
     $scope.mostrar = 1;
-    $scope.item = {};
-  }
-
-  $scope.editar = function(item)
-  {
-    $scope.settings.accion = 'Editar';
-    $scope.mostrar = 1;
-    $scope.item = item;
-  }
-
-  $scope.eliminar = function(item)
-  {
-    $scope.settings.accion = 'Eliminar';
-    $scope.mostrar = 1;
-    $scope.item = item;
   }
 
   $scope.cancelar = function()
@@ -187,53 +149,31 @@ app.controller('UsuariosController', function ($scope, $window, usuariosService)
     $scope.mostrar = 0;
   }
 
-  $scope.guardar = function(item)
+  $scope.guardar = function()
   {
-    if($scope.settings.accion == "Crear")
-    {
-      usuariosService.create(item).then(function(dataResponse)
+    var data = {
+      pass_actual: $scope.usuario.pass_actual,
+      password: $scope.usuario.password,
+      id: $scope.id_empleado
+    };
+
+    $http({
+      method: 'POST',
+      url: APP.api + 'empleados/cambiar_password',
+      params: data
+    })
+    .then(function(dataResponse){
+      if(dataResponse.data.result)
       {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else if($scope.settings.accion == "Editar")
-    {
-      usuariosService.update(item).then(function(dataResponse)
+        $scope.usuario = {};
+        alert(dataResponse.data.message);
+        $scope.mostrar = 0;
+      }
+      else
       {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else
-    {
-      usuariosService.delete(item.id).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
+        showAlert("red", "Espera!", dataResponse.data.message);
+      }
+    });
   }
 
   function showAlert(color, title, message)
@@ -245,287 +185,119 @@ app.controller('UsuariosController', function ($scope, $window, usuariosService)
       color: color
     }
   }
-  
-
-  loader();
 
 });
 
-app.controller('EmpleadosController', function ($scope, $window, empleadosService) {
+app.controller('ServiciosController', function ($scope, $window, $http, APP, serviciosService) {
 
-  $scope.data = [];
-  $scope.settings = {
-    singular: 'Empleado',
-    plural: 'Empleados',
-    accion: 'Crear'
-  }
-  $scope.mostrar = 0;
-
-  $scope.cargar_datos = function()
-  {
-    $scope.mostrar = 0;
-    empleadosService.getData("GET", {}).then(function(dataResponse)
-    {
-      $scope.data = dataResponse.data.records;
-    });
-  }
-
-  $scope.cargar_datos();
-
-  loader();
-
-});
-
-app.controller('TiposVehiculosController', function ($scope, $window, vehiculosService) {
-
-  $scope.data = [];
-  $scope.settings = {
-    singular: 'Tipo Vehiculo',
-    plural: 'Tipos Vehiculos',
-    accion: 'Crear'
-  }
   $scope.msg = {
       mostrar: 0,
       title: "",
       message: "",
       color: ""
   }
-  $scope.mostrar = 0;
+  $scope.tipos_vehiculos = [];
+  $scope.servicios = [];
+  $scope.extras = [];
+  $scope.mostrar_servicio = 0;
+  $scope.mostrar_extra = 0;
+  $scope.total = 0;
+  $scope.title = "Comprar";
 
   $scope.cargar_datos = function()
   {
-    $scope.mostrar = 0;
-    $scope.msg = {
-        mostrar: 0,
-        title: "",
-        message: "",
-        color: ""
-    }
-    vehiculosService.getData("GET", {}).then(function(dataResponse)
-    {
-      $scope.data = dataResponse.data.records;
-    });
-  }
+    serviciosService.getServicios().then(function(dataResponse){
 
-  $scope.cargar_datos();
-
-  $scope.crear = function()
-  {
-    $scope.settings.accion = 'Crear';
-    $scope.mostrar = 1;
-    $scope.item = {};
-  }
-
-  $scope.editar = function(item)
-  {
-    $scope.settings.accion = 'Editar';
-    $scope.mostrar = 1;
-    $scope.item = item;
-  }
-
-  $scope.eliminar = function(item)
-  {
-    $scope.settings.accion = 'Eliminar';
-    $scope.mostrar = 1;
-    $scope.item = item;
-  }
-
-  $scope.cancelar = function()
-  {
-    $scope.mostrar = 0;
-  }
-
-  $scope.guardar = function(item)
-  {
-    if($scope.settings.accion == "Crear")
-    {
-      vehiculosService.create(item).then(function(dataResponse)
+      if(dataResponse.data.result)
       {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else if($scope.settings.accion == "Editar")
-    {
-      vehiculosService.update(item).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else
-    {
-      vehiculosService.delete(item.id).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-  }
-
-  function showAlert(color, title, message)
-  {
-    $scope.msg = {
-      mostrar: 1,
-      title: title,
-      message: message,
-      color: color
-    }
-  }
-  
-
-  loader();
-
-});
-
-app.controller('ServiciosController', function ($scope, $window, serviciosService, vehiculosService) {
-
-  $scope.data = [];
-  $scope.combos = [{id: 0, descripcion: "No"},{id: 1, descripcion: "Si"}];
-  $scope.precios = [];
-  $scope.settings = {
-    singular: 'Servicio',
-    plural: 'Servicios',
-    accion: 'Crear'
-  }
-  $scope.msg = {
-      mostrar: 0,
-      title: "",
-      message: "",
-      color: ""
-  }
-  $scope.mostrar = 0;
-  var dataPrecios = [];
-
-  $scope.cargar_datos = function()
-  {
-    $scope.mostrar = 0;
-    $scope.msg = {
-        mostrar: 0,
-        title: "",
-        message: "",
-        color: ""
-    }
-    serviciosService.getData("GET", {}).then(function(dataResponse)
-    {
-      $scope.data = dataResponse.data.records;
-    });
-
-    vehiculosService.getData("GET", {}).then(function(dataResponse)
-    {
-      dataPrecios = dataResponse.data.records;
-    });
-  }
-
-  $scope.cargar_datos();
-
-  $scope.crear = function()
-  {
-    $scope.settings.accion = 'Crear';
-    $scope.mostrar = 1;
-    $scope.item = { cantidad: 1 };
-    $scope.precios = dataPrecios;
-  }
-
-  $scope.editar = function(item)
-  {
-    $scope.settings.accion = 'Editar';
-    $scope.mostrar = 1;
-    $scope.item = item;
-    $scope.precios = angular.fromJson(item.precios);
-  }
-
-  $scope.eliminar = function(item)
-  {
-    $scope.settings.accion = 'Eliminar';
-    $scope.mostrar = 1;
-    $scope.item = item;
-    $scope.precios = angular.fromJson(item.precios);
-  }
-
-  $scope.cancelar = function()
-  {
-    $scope.mostrar = 0;
-  }
-
-  $scope.guardar = function(item)
-  {
-    if($scope.settings.accion == "Crear")
-    {
-      item.precios = angular.toJson($scope.precios);
-      
-      serviciosService.create(item).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else if($scope.settings.accion == "Editar")
-    {
-      var datos = {
-        id: item.id,
-        nombre: item.nombre,
-        precios: angular.toJson($scope.precios),
-        cantidad: item.cantidad,
-        es_combo: item.es_combo
+        $scope.tipos_vehiculos = dataResponse.data.records;
       }
 
-      serviciosService.update(datos).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
-    }
-    else
+    });
+  }
+
+  $scope.cargar_datos();
+
+  $scope.limpiar_datos = function()
+  {
+    $scope.tipos_vehiculos = [];
+    $scope.servicios = [];
+    $scope.extras = [];
+    $scope.mostrar_servicio = 0;
+    $scope.mostrar_extra = 0;
+    $scope.total = 0;
+    $scope.title = "Comprar";
+    $scope.cargar_datos();
+  }
+
+  $scope.llenarServicios = function()
+  {
+    if($scope.item_vehiculo!=undefined)
     {
-      serviciosService.delete(item.id).then(function(dataResponse)
-      {
-        if(dataResponse.data.result)
-        {
-          showAlert("green", "Exito!", dataResponse.data.message);
-          setTimeout(function(){ $scope.cargar_datos(); }, 3000);
-        }
-        else
-        {
-          showAlert("red", "Espera!", dataResponse.data.message);
-        }
-      });
+      $scope.mostrar_servicio = 1;
+      $scope.servicios = $scope.item_vehiculo.servicios;
     }
+  }
+
+  $scope.llenarExtras = function()
+  {
+    if($scope.item_vehiculo!=undefined)
+    {
+      $scope.mostrar_extra = 1;
+      $scope.extras = $scope.item_vehiculo.extras;
+      $scope.calcular();
+    }
+  }
+
+  $scope.calcular = function()
+  {
+    $scope.total = 0;
+    $scope.total += $scope.item_servicio.precio;
+    angular.forEach($scope.extras, function(extra)
+    {
+      if(!!extra.selected)
+        $scope.total += extra.precio;
+    });
+  }
+
+  $scope.comprar = function()
+  {
+    $scope.title = "Cargando...";
+    var extras = [];
+
+    angular.forEach($scope.extras, function(extra)
+    {
+      if(!!extra.selected)
+        extras.push( extra );
+    });
+
+    data_servicio = {
+      tipo_vehiculo: { id: $scope.item_vehiculo.id, nombre: $scope.item_vehiculo.nombre },
+      servicio: $scope.item_servicio,
+      extras: extras,
+      total: $scope.total
+    }
+
+    data = {
+      id_empleado: $scope.id_empleado,
+      cantidad: $scope.item_servicio.cantidad,
+      detalle: angular.toJson(data_servicio),
+      total: $scope.total
+    }
+
+    serviciosService.comprar(data).then(function(dataResponse){
+
+      if(dataResponse.data.result)
+      {
+        alert("Has adquirido tu servicio con exito, en un momento te enviaremos un correo con el codigo de servicio.");
+        $scope.limpiar_datos();
+      }
+      else
+      {
+        alert(dataResponse.data.message);
+      }
+
+    });
   }
 
   function showAlert(color, title, message)
@@ -537,9 +309,6 @@ app.controller('ServiciosController', function ($scope, $window, serviciosServic
       color: color
     }
   }
-  
-
-  loader();
 
 });
   

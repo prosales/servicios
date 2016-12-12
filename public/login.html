@@ -6,7 +6,7 @@
 <!--[if IE 8]>
 <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js" data-ng-app="myApp"> <!--<![endif]-->
+<html class="no-js" data-ng-app="myAppClient"> <!--<![endif]-->
 <head>
 
     <!-- Meta-Information -->
@@ -41,17 +41,17 @@
 				<form class="account-form">
 					<fieldset>
 						<i class="ti-user"></i>
-						<input type="text" placeholder="Usuario" ng-model="user.usuario"/>
+						<input type="text" placeholder="Codigo Empleado" ng-model="user.codigo_empleado"/>
 					</fieldset>
 					<fieldset>
 						<i class="ti-key"></i>
 						<input type="password" placeholder="Password" ng-model="user.password"/>
 					</fieldset>
-					<label><input type="checkbox" ng-model="user.empleado">Es empleado ?</label>
 					<button class="c-btn medium green pop pull-right" ng-click="login()">Entrar</button>
+					<button class="c-btn medium blue pop pull-right" ng-click="signup()">Registrate!</button>
 				</form>
 				<ul class="account-feature">
-					<li><a href="" ng-click="signup()">Crear cuenta</a></li>
+					
 				</ul>
 			</div><!-- Login Sec -->
 		</div>
@@ -63,6 +63,7 @@
 			<div class="col-md-8">
 				<div class="billing-sec">
 					<div class="row">
+					<form name="form" class="form-validation">	
 						<div class="col-md-12">
 							<div class="widget-title no-padding no-margin">
 								<h3>Crea tu cuenta</h3>
@@ -71,11 +72,11 @@
 						</div>
 						<div class="col-md-12 field">
 							<label>Codigo de Empleado <span>*</span> </label>
-							<input type="text" ng-model="sign.codigo_empleado" />
+							<input type="text" ng-model="sign.codigo_empleado" required/>
 						</div>
 						<div class="col-md-6 field">
 							<label>Primer Nombre <span>*</span> </label>
-							<input type="text" ng-model="sign.primer_nombre" />
+							<input type="text" ng-model="sign.primer_nombre" required/>
 						</div>
 						<div class="col-md-6 field">
 							<label>Segundo Nombre <span></span> </label>
@@ -83,7 +84,7 @@
 						</div>
 						<div class="col-md-6 field">
 							<label>Primer Apellido <span>*</span> </label>
-							<input type="text" ng-model="sign.primer_apellido" />
+							<input type="text" ng-model="sign.primer_apellido" required/>
 						</div>
 						<div class="col-md-6 field">
 							<label>Segundo Apellido <span></span> </label>
@@ -92,18 +93,19 @@
 						
 						<div class="col-md-6 field">
 							<label>Telefono <span>*</span> </label>
-							<input type="text" ng-model="sign.telefono" />
+							<input type="text" ng-model="sign.telefono" required/>
 						</div>
 						<div class="col-md-6 field">
 							<label>Email<span>*</span> </label>
-							<input type="email" ng-model="sign.email" />
+							<input type="email" ng-model="sign.email" required/>
 						</div>
 						<div class="col-md-2">
 							<button class="red-skin" ng-click="cancelar()">Cancelar</button> 
 						</div>
 						<div class="col-md-2">
-							<button class="green-skin" ng-click="enviar()">Enviar</button>
+							<button class="green-skin" ng-click="enviar()" ng-disabled="form.$invalid">Enviar</button>
 						</div>
+					</form>
 					</div>				
 
 				</div>

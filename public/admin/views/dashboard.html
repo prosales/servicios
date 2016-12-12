@@ -1,0 +1,97 @@
+<div class="panel-content">
+	<div class="welcome-patti">
+		
+		<ul class="breadcrumbs">
+			<li><a href="#" title=""><i class="fa fa-home"></i></a></li>
+			<li><a href="#" title="">Dashboard</a></li>
+		</ul>
+	</div><!-- Welcome Patti -->
+	<div class="heading-sec">
+		<div class="row">
+			<div class="col-md-4 column">
+				<div class="heading-profile">
+					<h2>Dashboard</h2>
+					
+				</div>
+			</div>
+		</div>
+	</div><!-- Heading Sec -->
+	<div class="main-content-area">
+		
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<div class="billing-sec">
+					<div class="row">
+					<form name="form" class="form-validation">	
+						<div class="col-md-12">
+							<div class="widget-title no-padding no-margin">
+								<h3>Ingresar servicios</h3>
+								<p>Para consultar información y agregar a la cola, debe ingresar el codigo del servicio.</p>
+							</div>
+						</div>
+						<div class="col-md-6 field">
+							<label>Código  </label>
+							<input type="text" ng-model="codigo">
+						</div>
+						<div class="col-md-6">
+							<button class="green-skin" ng-click="consultar()">Buscar</button>
+						</div>
+		
+					</form>
+					</div>
+
+					<div class="row">
+					
+						<div class="col-md-12 field">
+							<label>Cliente  </label>
+							<input type="text" ng-model="compra.cliente" readonly>
+						</div>
+						<div class="col-md-6 field">
+							<label>Tipo Vehiculo  </label>
+							<input type="text" ng-model="compra.tipo_vehiculo" readonly>
+						</div>
+						<div class="col-md-6 field">
+							<label>Servicio  </label>
+							<input type="text" ng-model="compra.servicio" readonly>
+						</div>
+						<div class="col-md-6 field">
+							<div class="my-cart cart-total-sec">
+							<div class="cart-heading">
+								<h2>Extras</h2>
+							</div>
+							<ul>
+								<li ng-repeat="item in extras">
+									<p>{{item.nombre}}</p>
+								</li>
+								<li ng-if="extras.length == 0">
+									<p>Ninguno</p>
+								</li>
+							</ul>
+						</div>
+						</div>
+						<div class="col-md-6 field">
+							<label>Total  </label>
+							<input type="text" ng-model="compra.total" readonly>
+						</div>
+		
+					</div>
+
+					<div class="row">
+					
+						<div class="col-md-6">
+							<button class="green-skin" ng-show="mostrar == 1" ng-click="agregar()">Agregar a cola</button>
+						</div>
+		
+					</div>			
+
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+
+	</div>
+</div><!-- Panel Content -->
+<script type="text/javascript">
+
+</script>

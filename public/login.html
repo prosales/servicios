@@ -17,17 +17,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Vendor: Bootstrap Stylesheets http://getbootstrap.com -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <!-- Our Website CSS Styles -->
     <link rel="stylesheet" href="css/icons.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/login.css">
 
 </head>
 <body ng-controller="LoginController">
  
-<div class="panel-content">
+<!--<div class="panel-content">
 
 	<div class="main-content-area" ng-show="tag == 1">
 		<div class="go-full">
@@ -53,7 +51,7 @@
 				<ul class="account-feature">
 					
 				</ul>
-			</div><!-- Login Sec -->
+			</div>
 		</div>
 	</div>
 
@@ -112,9 +110,81 @@
 			</div>
 			<div class="col-md-2"></div>
 		</div>
+	</div>-->
+	<div class="login-wrap">
+		<div class="login-html">
+			<input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Login</label>
+			<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Registro</label>
+			<div class="login-form">
+				<div class="sign-in-htm">
+				<form>
+					<div class="hr"></div>
+					<div class="group">
+						<label for="user" class="label">Codigo de Empleado</label>
+						<input id="user" type="text" class="input" ng-model="user.codigo_empleado">
+					</div>
+					<div class="group">
+						<label for="pass" class="label">Password</label>
+						<input id="pass" type="password" class="input" data-type="password" ng-model="user.password">
+					</div>
+					<!--<div class="group">
+						<input id="check" type="checkbox" class="check" checked>
+						<label for="check"><span class="icon"></span> Keep me Signed in</label>
+					</div>-->
+					<div class="group">
+						<button class="button" ng-click="login()">Entrar</button>
+					</div>
+					<div class="hr"></div>
+					<!--<div class="foot-lnk">
+						<a href="#forgot">Forgot Password?</a>
+					</div>-->
+				</form>
+				</div>
+
+				<div class="sign-up-htm">
+				<form name="form" class="form-validation">	
+					<div class="group">
+						<label for="user" class="label">Código de Empleado</label>
+						<input id="user" type="text" class="input" ng-model="sign.codigo_empleado" required>
+					</div>
+					<div class="group">
+						<label for="primer_nombre" class="label">Primer Nombre</label>
+						<input id="primer_nombre" type="text" class="input" ng-model="sign.primer_nombre" required>
+					</div>
+					<div class="group">
+						<label for="segundo_nombre" class="label">Segundo Nombre</label>
+						<input id="segundo_nombre" type="text" class="input" ng-model="sign.segundo_nombre" >
+					</div>
+					<div class="group">
+						<label for="primer_apellido" class="label">Primer Apellido</label>
+						<input id="primer_apellido" type="text" class="input" ng-model="sign.primer_apellido" required>
+					</div>
+					<div class="group">
+						<label for="segundo_apellido" class="label">Segundo Apellido</label>
+						<input id="segundo_apellido" type="text" class="input" ng-model="sign.segundo_apellido" >
+					</div>
+					<div class="group">
+						<label for="telefono" class="label">Telefono</label>
+						<input id="telefono" type="text" class="input" ng-model="sign.telefono" required>
+					</div>
+					<div class="group">
+						<label for="email" class="label">Email</label>
+						<input id="email" type="text" class="input" ng-model="sign.email" required>
+					</div>
+					<div class="group">
+						<button class="button" ng-click="enviar()" ng-disabled="form.$invalid">Enviar</button>
+					</div>
+					<div class="hr"></div>
+					<!--<div class="foot-lnk">
+						<label for="tab-1">Already Member?</a>
+					</div>-->
+				</form>
+				</div>
+			</div>
+		</div>
 	</div>
 
-</div><!-- Panel Content -->
+</div>
 
 
 <!-- Vendor: Javascripts -->

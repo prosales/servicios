@@ -30,7 +30,7 @@ app.controller('LoginController', function ($scope, $window, $http, APP, localSt
       $http({
         method: 'POST',
         url: APP.api + 'login_cliente',
-        params: $scope.user
+        data: $scope.user
       })
       .then(function(dataResponse){
         if(dataResponse.data.result)
@@ -57,7 +57,9 @@ app.controller('LoginController', function ($scope, $window, $http, APP, localSt
       .then(function(dataResponse){
         if(dataResponse.data.result)
         {
+          var empleado = dataResponse.data.records;
           alert("Registro creado, comunicate con Recursos Humanos para habilitar tu usuario.");
+          $window.open(APP.api + "carta?nombre="+empleado.primer_nombre+" "+empleado.segundo_nombre+" "+empleado.primer_apellido+" "+empleado.segundo_apellido+"&codigo="+empleado.codigo_empleado, "_blank");
           $scope.sign = {};
           $scope.tag = 1;
         }

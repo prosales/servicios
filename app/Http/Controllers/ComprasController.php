@@ -27,11 +27,15 @@ class ComprasController extends Controller
      */
     public function index(Request $request)
     {
+        $contadores = [];
         try
         {
             if($request->input("id_empleado"))
             {
                 $registros = Compras::where("id_empleado", $request->input("id_empleado"))->get();
+                $contadores["comprados"] = Compras::where("id_empleado", $request->input("id_empleado"))->count();
+                $contadores["usados"] = DB::table("servicios_empleados")->leftJoin("compras","compras.id","=","servicios_empleados.id_compra")->whereRaw("compras.id_empleado = ?", [$request->input("id_empleado")])->count();
+                $contadores["sin_usar"] = $contadores["comprados"] - $contadores["usados"];
             }
             else
             {
@@ -52,7 +56,8 @@ class ComprasController extends Controller
             $response = [
                 "message" => $this->message,
                 "result" => $this->result,
-                "records" => $this->records
+                "records" => $this->records,
+                "contadores" => $contadores
             ];
 
             return response()->json($response);
@@ -402,12 +407,38 @@ class ComprasController extends Controller
     {
         try
         {
-            $registro = ServiciosEmpleados::find($request->input("id"));
-            if($request->input("inicio") == "1")
-                $registro->inicio_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
-            else
-                $registro->fin_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
-            $registro->save();
+            $registro = DB::transaction( function() use($request){
+                $enviar = false;
+                $registro = ServiciosEmpleados::find($request->input("id"));
+                if($request->input("inicio") == "1")
+                {
+                    $registro->inicio_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
+                }
+                else
+                {
+                    $enviar = true;
+                    $registro->fin_lavado = Carbon::now("America/Guatemala")->toDateTimeString();
+                }
+                $registro->save();
+                $registro->servicio;
+
+                if($enviar)
+                {
+                    $email = $registro->servicio->empleado->email;
+                    $data = ["nombre"=>$registro->servicio->empleado->primer_nombre." ".$registro->servicio->empleado->primer_apellido];
+                    \Mail::send('servicio_finalizado', $data, function ($message) use ($email)
+                    {
+                        $message->subject("Servicio Finalizado");
+
+                        $message->from('burbujas@researchmobile.co', 'Mr. Burbujas');
+
+                        $message->to($email);
+
+                    });
+                }
+
+                return $registro;
+            });
 
             $this->message = "Registro actualizado";
             $this->result = true;
@@ -427,6 +458,74 @@ class ComprasController extends Controller
             ];
 
             return response()->json($response);
+        }
+    }
+
+    public function servicios_por_mes(Request $request)
+    {
+        try
+        {
+            if($request->input("mes"))
+            {
+                $registros = Compras::whereRaw("YEAR(fecha) = ? AND MONTH(fecha) = ?", [date("Y"), $request->input("mes")])->with("empleado")->orderBy('id_empleado', 'desc')->get();
+
+                $this->message = "Registros consultados";
+                $this->result = true;
+                $this->records = $registros;
+            }
+            else
+            {
+                $this->message = "El campo mes es obligatorio";
+                $this->result = false;
+            }
+        }
+        catch(\Exception $e)
+        {
+            $this->message = env("APP_DEBUG") ? $e->getMessage() : "Error al consultar registro";
+            $this->result = false;
+        }
+        finally
+        {
+            $response = [
+                "message" => $this->message,
+                "result" => $this->result,
+                "records" => $this->records
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function exportar_servicios_por_mes()
+    {
+        try
+        {
+            \Excel::create('Servicios', function($excel) {
+
+                $excel->sheet('Servicios', function($sheet) {
+
+                    $sheet->loadView('servicios_por_mes');
+
+                });
+            })->export('xls');
+        }
+        catch(\Exception $e)
+        {
+
+        }
+    }
+
+    public function carta(Request $request)
+    {
+        try
+        {   
+            $data = ["nombre"=>$request->input("nombre"), "codigo"=>$request->input("codigo")];
+            $pdf = \PDF::loadView('carta', $data);
+            return $pdf->download('carta.pdf');
+        }
+        catch(\Exception $e)
+        {
+
         }
     }
 }

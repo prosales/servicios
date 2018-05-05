@@ -25,15 +25,15 @@
 						<div class="profile-avatar">
 							<span><img src="images/avatar.png" width="100"></span>
 							<div class="profile-name">
-								<h3>{{nombre}}</h3>
+								<h3>{{nombre_completo}}</h3>
 								<i>{{codigo_empleado}}</i>
 								
 							</div>
 						</div>
 						<ul class="profile-count">
-							<li>10<i>Servicios comprados</i></li>
-							<li>5<i>Sin usar</i></li>
-							<li>5<i>Usados</i></li>
+							<li>{{comprados}}<i>Servicios comprados</i></li>
+							<li>{{usados}}<i>Usados</i></li>
+							<li>{{sin_usar}}<i>Sin usar</i></li>
 						</ul>
 						<ul class="profile-connect">
 							<li><a href="" ng-click="cambiar_password()">Cambiar contraseña</a></li>

@@ -10,16 +10,19 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-/*header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Credentials: true');
 header("Access-Control-Allow-Methods : GET,POST,PUT,DELETE,OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");*/
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 Route::get('/', function () {
     return Redirect::to("index.html");
 });
 Route::get('/view/cliente', function () {
     return view("activacion_cliente");
+});
+Route::get('/view/carta', function () {
+    return view("carta");
 });
 
 Route::group(["prefix" => "api"], function()
@@ -34,6 +37,9 @@ Route::group(["prefix" => "api"], function()
 	Route::get("/agregar_servicio",					"ComprasController@agregar_servicio");
 	Route::get("/consultar_colas/{id}",				"ComprasController@consultar_colas");
 	Route::get("/lavado",							"ComprasController@lavado");
+	Route::get("/servicios_por_mes",				"ComprasController@servicios_por_mes");
+	Route::get("/exportar_servicios_por_mes",		"ComprasController@exportar_servicios_por_mes");
+	Route::get("/carta",							"ComprasController@carta");
 
 	Route::resource("/usuarios",			"UsuariosController");
 	Route::resource("/tipos_vehiculos",		"TiposVehiculosController");

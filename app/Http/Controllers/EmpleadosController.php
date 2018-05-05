@@ -69,6 +69,10 @@ class EmpleadosController extends Controller
         {
             $nuevoRegistro = DB::transaction( function() use($request){
                 
+                $registro = Empleados::where("codigo_empleado", $request->input("codigo_empleado"))->first();
+                if($registro)
+                    throw new Exception("El codigo de empleado ya existe");
+
                 $registro = Empleados::create(
                 [
                     "codigo_empleado" => $request->input("codigo_empleado"),

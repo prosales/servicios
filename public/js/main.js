@@ -112,6 +112,7 @@ app.controller('MainController', function($scope, $window, localStorageService) 
   $scope.id_empleado = localStorageService.cookie.get('cliente').id;
   $scope.codigo_empleado = localStorageService.cookie.get('cliente').codigo_empleado;
   $scope.nombre = localStorageService.cookie.get('cliente').primer_nombre + ' ' + localStorageService.cookie.get('cliente').primer_apellido;
+  $scope.nombre_completo = localStorageService.cookie.get('cliente').primer_nombre + ' ' + localStorageService.cookie.get('cliente').segundo_nombre + ' ' + localStorageService.cookie.get('cliente').primer_apellido+ ' ' + localStorageService.cookie.get('cliente').segundo_apellido;
 
   loader();
 
@@ -127,12 +128,18 @@ app.controller('DashboardController', function ($scope, $window, $http, APP, ser
       color: ""
   }
   $scope.mostrar = 0;
+  $scope.comprados = 0;
+  $scope.usados = 0;
+  $scope.sin_usar = 0;
 
   $scope.cargar_datos = function()
   {
     serviciosService.getDataCompras("GET", { id_empleado: $scope.id_empleado }).then(function(dataResponse){
 
       $scope.data = dataResponse.data.records;
+      $scope.comprados = dataResponse.data.contadores.comprados;
+      $scope.usados = dataResponse.data.contadores.usados;
+      $scope.sin_usar = dataResponse.data.contadores.sin_usar;
 
     });
   }
@@ -234,8 +241,8 @@ app.controller('ServiciosController', function ($scope, $window, $http, APP, ser
   {
     if($scope.item_vehiculo!=undefined)
     {
-      $scope.mostrar_servicio = 1;
       $scope.servicios = $scope.item_vehiculo.servicios;
+      $scope.mostrar_servicio = 1;
     }
   }
 

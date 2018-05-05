@@ -74,4 +74,16 @@ app.service('comprasService',['$http', 'APP',  function($http, APP) {
         });
     };
 
+    this.serviciosPorMes = function(metodo, parametros) {
+
+        return $http({
+            method: metodo,
+            url: APP.api + 'servicios_por_mes',
+            params: parametros,
+            headers: {
+                'Authorization': 'Token token=xxxxYYYYZzzz'
+            }
+        });
+    };
+
 }]);

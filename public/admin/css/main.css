@@ -20044,3 +20044,17 @@ span.online::before {background-color: #07bf29;}
 *:focus {
     outline: none;
 }
+
+.filtro {
+    border: medium none;
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    -ms-border-radius: 40px;
+    -o-border-radius: 40px;
+    border-radius: 40px;
+    float: left;
+    font-size: 12px;
+    height: 40px;
+    padding: 0 10px;
+    width: 100%;
+}

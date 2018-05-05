@@ -24,6 +24,7 @@
 					<div class="grids">
 						<div class="ribbon-wrapper"><div class="ribbon-design " ng-class="item.inicio_lavado!=null ? 'red' : 'sky'">{{item.inicio_lavado!=null ? 'PROCESO' : 'PENDIENTE'}}</div></div>
 						<h4>Servicio #{{item.id}}</h4>
+						<p><b>Cliente: </b>{{item.servicio.empleado.primer_nombre+" "+item.servicio.empleado.segundo_nombre+" "+item.servicio.empleado.primer_apellido+" "+item.servicio.empleado.segundo_apellido}}</p>
 						<p><b>Tipo Vehiculo: </b>{{item.servicio.detalle.tipo_vehiculo.nombre}}</p>
 						<p><b>Sevicio: </b>{{item.servicio.detalle.servicio.nombre}}</p>
 						<p><b>Extras:</b></p>

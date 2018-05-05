@@ -49,19 +49,25 @@
                          <a href="#/usuarios"><i class="ti-user"></i><span>Usuarios</span></a>
                     </li>
                     <li ng-if="type != 2">
-                         <a href="#/clientes"><i class="ti-user"></i><span>Clientes</span></a>
+                         <a href="#/clientes"><i class="ti-face-smile"></i><span>Clientes</span></a>
                     </li>
                     <li ng-if="type == 1">
-                         <a href="#/tipos_vehiculos"><i class="ti-user"></i><span>Tipos Vehiculos</span></a>
+                         <a href="#/tipos_vehiculos"><i class="ti-car"></i><span>Tipos Vehiculos</span></a>
                     </li>
                     <li ng-if="type == 1">
-                         <a href="#/servicios"><i class="ti-user"></i><span>Servicios</span></a>
+                         <a href="#/servicios"><i class="ti-brush-alt"></i><span>Servicios</span></a>
                     </li>
                     <li ng-if="type == 1">
-                         <a href="#/extras"><i class="ti-user"></i><span>Extras</span></a>
+                         <a href="#/extras"><i class="ti-check-box"></i><span>Extras</span></a>
                     </li>
                     <li ng-if="type == 2">
-                         <a href="#/colas"><i class="ti-user"></i><span>Colas</span></a>
+                         <a href="#/colas"><i class="ti-timer"></i><span>Colas</span></a>
+                    </li>
+                    <li class="menu-item-has-children" ng-if="type == 1">
+                         <a title=""><i class="ti-bar-chart-alt"></i><span>Reportes</span></a>
+                         <ul>
+                              <li><a href="#/serviciospormes">Servicios por mes</a></li>
+                         </ul>
                     </li>
                     <!--<li class="menu-item-has-children">
                          <a title=""><i class="ti-pencil"></i><span>Pages</span></a>
@@ -106,7 +112,7 @@
       });
 
      //***** Clients lists Scroll *****//
-     $(function(){
+     /*$(function(){
           $('#header-scroll').slimScroll({
                height: '100%',
                wheelStep: 10,
@@ -115,7 +121,7 @@
                railOpacity : '0.1',
                size: '2px'
           });
-     });
+     });*/
 
      //**** Message Dropdown ***//
      $('.message-list.dropdown > a').click(function(e) {

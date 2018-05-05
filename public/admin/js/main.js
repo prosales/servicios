@@ -25,6 +25,7 @@ var app = angular.module('myApp', [
     .when("/servicios", {templateUrl: "views/servicios.html", controller: "ServiciosController"})
     .when("/extras", {templateUrl: "views/extras.html", controller: "ExtrasController"})
     .when("/colas", {templateUrl: "views/colas.html", controller: "ColasController"})
+    .when("/serviciospormes", {templateUrl: "views/serviciospormes.html", controller: "ReporteServiciosController"})
     .when("/404", {templateUrl: "views/404.html"})
 
     // else 404
@@ -175,7 +176,7 @@ app.controller('DashboardController', function ($scope, $window, $http, comprasS
 
   $scope.agregar = function()
   {
-    comprasService.agregar("GET", {id_compra: $scope.id_compra}).then(function(dataResponse){
+    comprasService.agregar("GET", {id_compra: $scope.id_compra, id_usuario: $scope.userid}).then(function(dataResponse){
 
       if(dataResponse.data.result)
       {
@@ -842,6 +843,65 @@ app.controller('ColasController', function ($scope, $window, comprasService) {
       return item.map(function(elem) {
           return elem.nombre;
       }).join(", ");
+  }
+
+});
+
+app.controller('ReporteServiciosController', function ($scope, $window, comprasService) {
+
+  $scope.data = [];
+  $scope.settings = {
+    singular: 'Usuario',
+    plural: 'Usuarios',
+    accion: 'Crear'
+  }
+  $scope.msg = {
+      mostrar: 0,
+      title: "",
+      message: "",
+      color: ""
+  }
+  $scope.mostrar = 0;
+
+  $scope.meses = [
+    {nombre: "Seleccione", mes: 0},
+    {nombre: "Enero", mes: 1},
+    {nombre: "Febrero", mes: 2},
+    {nombre: "Marzo", mes: 3},
+    {nombre: "Abril", mes: 4},
+    {nombre: "Mayo", mes: 5},
+    {nombre: "Junio", mes: 6},
+    {nombre: "Julio", mes: 7},
+    {nombre: "Agosto", mes: 8},
+    {nombre: "Septiembre", mes: 9},
+    {nombre: "Octubre", mes: 10},
+    {nombre: "Noviembre", mes: 11},
+    {nombre: "Diciembre", mes: 12}
+  ];
+
+  $scope.mes = 0;
+
+  $scope.cargar_datos = function()
+  {
+    $scope.mostrar = 0;
+    $scope.msg = {
+        mostrar: 0,
+        title: "",
+        message: "",
+        color: ""
+    }
+    
+    if($scope.mes>0)
+    {
+      comprasService.serviciosPorMes("GET", {mes: $scope.mes}).then(function(dataResponse)
+      {
+        $scope.data = dataResponse.data.records;
+      });
+    }
+    else
+    {
+      alert("Debes seleccionar un mes");
+    }
   }
 
 });
